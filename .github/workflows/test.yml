@@ -1,0 +1,56 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-13, macos-latest]
+        xcode: [14.2, 15.2, 16.0]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+        env:
+          XCODE_VERSION: ${{ matrix.xcode }}
+
+      - name: Create main.m file
+        run: |
+          cat <<EOF > main.m
+          #import <Foundation/Foundation.h>
+
+          int main(int argc, const char * argv[]) {
+              @autoreleasepool {
+                  if (@available(macOS 10.15, *)) {
+                      NSLog(@"Running on macOS 10.15 or later");
+                  } else {
+                      NSLog(@"Running on a macOS version earlier than 10.15");
+                  }
+                  if (@available(visionOS 1.0, *)) {
+                      NSLog(@"Running on visionOS 1.0 or later");
+                  } else {
+                      NSLog(@"Running on a version earlier than visionOS 1.0");
+                  }
+              }
+              return 0;
+          }
+          EOF
+
+      - name: Compile main.m
+        run: clang -fobjc-arc -framework Foundation main.m -o main
+
+      - name: Run executable
+        run: ./main
+
