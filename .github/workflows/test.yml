@@ -27,6 +27,15 @@ jobs:
         env:
           XCODE_VERSION: ${{ matrix.xcode }}
 
+      - name: Install Clang 17
+        run: brew install llvm@17
+
+      - name: Add Clang 17 to PATH
+        run: echo "$(brew --prefix llvm@17)/bin" >> $GITHUB_PATH
+
+      - name: Verify Clang Version
+        run: clang --version
+
       - name: Create main.m file
         run: |
           cat <<EOF > main.m
