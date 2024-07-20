@@ -52,11 +52,16 @@ jobs:
                   } else {
                       NSLog(@"Running on a macOS version earlier than 10.15");
                   }
+
+                  #if defined(visionOS)
                   if (@available(visionOS 1.0, *)) {
                       NSLog(@"Running on visionOS 1.0 or later");
                   } else {
                       NSLog(@"Running on a version earlier than visionOS 1.0");
                   }
+                  #else
+                  NSLog(@"visionOS is not defined");
+                  #endif
               }
               return 0;
           }
