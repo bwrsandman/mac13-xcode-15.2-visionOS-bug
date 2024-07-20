@@ -16,8 +16,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-13, macos-latest]
-        xcode: [14.2, 15.2, '16.0']
-        llvm: [17, 18]
+        xcode: [14.2, 15.2]
+        llvm: [17, 18, none]
 
     steps:
       - name: Checkout repository
@@ -29,12 +29,15 @@ jobs:
           XCODE_VERSION: ${{ matrix.xcode }}
 
       - name: Install Clang ${{ matrix.llvm }}
+        if: matrix.llvm != 'none'
         run: brew install llvm@${{ matrix.llvm }}
 
       - name: Add Clang ${{ matrix.llvm }} to PATH
+        if: matrix.llvm != 'none'
         run: echo "$(brew --prefix llvm@${{ matrix.llvm }})/bin" >> $GITHUB_PATH
 
       - name: Verify Clang Version
+        if: matrix.llvm != 'none'
         run: clang --version
 
       - name: Create main.m file
