@@ -44,6 +44,9 @@ jobs:
         run: |
           cat <<EOF > main.m
           #import <Foundation/Foundation.h>
+          #ifndef __VISION_OS_VERSION_MAX_ALLOWED
+          #define __VISION_OS_VERSION_MAX_ALLOWED 0
+          #endif
 
           int main(int argc, const char * argv[]) {
               @autoreleasepool {
@@ -53,7 +56,7 @@ jobs:
                       NSLog(@"Running on a macOS version earlier than 10.15");
                   }
 
-                  #if defined(visionOS)
+                  #if __VISION_OS_VERSION_MAX_ALLOWED >= 10000
                   if (@available(visionOS 1.0, *)) {
                       NSLog(@"Running on visionOS 1.0 or later");
                   } else {
